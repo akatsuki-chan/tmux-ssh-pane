@@ -3,7 +3,6 @@ name = "tmux_ssh_pane"
 version = "0.1.0"
 dependencies = [
  "errno 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "libc 0.2.20 (registry+https://github.com/rust-lang/crates.io-index)",
  "liner 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "nom 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]

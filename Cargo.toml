@@ -3,7 +3,6 @@ name = "tmux_ssh_pane"
 version = "0.1.0"
 
 [dependencies]
-libc = "*"
 errno = "*"
 nom = "*"
 liner = "*"
