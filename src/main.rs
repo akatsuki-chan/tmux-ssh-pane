@@ -1,5 +1,6 @@
 extern crate libc;
-#[macro_use] extern crate nom;
+#[macro_use]
+extern crate nom;
 extern crate liner;
 
 use liner::Context;
@@ -12,10 +13,7 @@ use std::process::Command;
 use nom::{multispace, space};
 
 fn is_hostname(chr: char) -> bool {
-     nom::is_alphanumeric(chr as u8)
-  || chr == '-'
-  || chr == '_'
-  || chr == '.'
+    nom::is_alphanumeric(chr as u8) || chr == '-' || chr == '_' || chr == '.'
 }
 
 named!(hostname<&str, &str>, take_while!(is_hostname));
@@ -50,12 +48,14 @@ fn skip_options(input: &str) -> nom::IResult<&str, ()> {
     loop {
         let r = tag_no_case!(_input, "host ");
         match r {
-            nom::IResult::Done(_, _) => { // ここまでスキップ
-                return nom::IResult::Done(_input, ())
-            },
+            nom::IResult::Done(_, _) => {
+                // ここまでスキップ
+                return nom::IResult::Done(_input, ());
+            }
             _ => {
-                if _input.len() < 4 { // 見つからん時は元のやつを返す
-                    return nom::IResult::Done(input, ())
+                if _input.len() < 4 {
+                    // 見つからん時は元のやつを返す
+                    return nom::IResult::Done(input, ());
                 }
                 _input = &_input[1..]
             }
@@ -92,10 +92,11 @@ fn main() {
                 let res = con.read_line("[prompt]$ ", &mut |_| {}).unwrap();
                 tmux_run(&["select-window", "-t", "tmux_rust_panels"]);
 
-                if res.is_empty() { // おしまい
+                if res.is_empty() {
+                    // おしまい
                     tmux_exit(hosts);
                     break;
-                } 
+                }
 
                 for n in 0..hosts.len() {
                     tmux_send_key(n, res.as_ref());
@@ -104,13 +105,13 @@ fn main() {
                 con.history.push(res.into());
             }
         }
-        _ => panic!("parse failed.")
+        _ => panic!("parse failed."),
     }
 }
 
 fn tmux_send_key(pane: usize, command: &str) -> Result<(), Error> {
     tmux_run(&["select-pane", "-t", pane.to_string().as_str()])
-    .and_then(|_| tmux_run(&["send-keys", command, "C-m"]))
+        .and_then(|_| tmux_run(&["send-keys", command, "C-m"]))
 }
 
 fn tmux_exit(hosts: Vec<&str>) -> Result<(), Error> {
@@ -124,15 +125,15 @@ fn tmux_exit(hosts: Vec<&str>) -> Result<(), Error> {
 
 fn ssh_connect(hosts: &Vec<&str>) -> Result<(), Error> {
     tmux_run(&["new-window", "-n", "tmux_rust_panels"])
-    .and_then(|_| tmux_run(&["send-keys", format!("ssh {}", hosts[0]).as_ref(), "C-m"]))
-    .and_then(|_| {
-        for h in &hosts[1..] {
-            try!(tmux_run(&["split-window", "-v"]));
-            try!(tmux_run(&["send-keys", format!("ssh {}", h.to_string()).as_ref(), "C-m"]));
-        };
+        .and_then(|_| tmux_run(&["send-keys", format!("ssh {}", hosts[0]).as_ref(), "C-m"]))
+        .and_then(|_| {
+            for h in &hosts[1..] {
+                try!(tmux_run(&["split-window", "-v"]));
+                try!(tmux_run(&["send-keys", format!("ssh {}", h.to_string()).as_ref(), "C-m"]));
+            }
 
-        Ok(())
-    })
+            Ok(())
+        })
 }
 
 fn tmux_run(args: &[&str]) -> Result<(), Error> {
