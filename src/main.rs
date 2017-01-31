@@ -95,6 +95,8 @@ fn main() {
                 if res.is_empty() {
                     // おしまい
                     tmux_exit(hosts);
+                    tmux_run(&["kill-window", "-t", "tmux_rust_panels"]);
+
                     break;
                 }
 
