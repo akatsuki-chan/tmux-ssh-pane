@@ -40,7 +40,7 @@ named!(ssh<&str, &str>,
     )
 );
 
-named!(ssh_config<&str, Vec<&str>>, many0!(ssh));
+named!(ssh_config<&str, Vec<&str>>, many1!(ssh));
 
 fn skip_options(input: &str) -> nom::IResult<&str, ()> {
     let mut _input = input.clone();
